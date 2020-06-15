@@ -32,7 +32,7 @@ class MoneyAgent(Agent):
     def step(self):
 
         if self.wealth < self.base_wealth / 4:
-            return
+            self.risky = False
 
         if self.risky:
             if self.random.random() < 0.5:
@@ -81,6 +81,9 @@ class MoneyModel(Model):
         self.datacollector.collect(self)
         self.schedule.step()
 
+
+np.set_printoptions(precision =2)
+
 model = MoneyModel(100000)
 
 for i in range(20):
@@ -95,10 +98,13 @@ sr = [a.wealth for a in model.schedule.agents if a.risky == False and a.rich == 
 rp = [a.wealth for a in model.schedule.agents if a.risky == True and a.rich == False]
 sp = [a.wealth for a in model.schedule.agents if a.risky == False and a.rich == False]
 
-print("Risky Rich: ", max(rr), np.mean(rr))
-print("Safe Rich: ", max(sr), np.mean(sr))
-print("Risky Poor: ", max(rp), np.mean(rp))
-print("Safe Poor: ", max(sp), np.mean(sp))
+print
+
+print("            ", "       Max       ", "       Mean       ", "       Median       ")
+print("Risky Rich: ", max(rr), np.mean(rr), np.median(rr))
+print("Safe Rich: ", max(sr), np.mean(sr), np.median(sr))
+print("Risky Poor: ", max(rp), np.mean(rp), np.median(rp))
+print("Safe Poor: ", max(sp), np.mean(sp), np.median(sp))
 
 
 
