@@ -21,13 +21,18 @@ class MoneyAgent(Agent):
         
         super().__init__(unique_id, model)
         
-        self.wealth = base_wealth
+        self.init_risky = risky
+
         self.risky = risky
         self.rich = rich
-        self.base_wealth = base_wealth
 
         if self.rich:
-            self.wealth = 10 * base_wealth
+            self.base_wealth = base_wealth * 10
+        else:
+            self.base_wealth = base_wealth
+        
+        self.wealth = self.base_wealth
+
 
     def step(self):
 
@@ -36,7 +41,7 @@ class MoneyAgent(Agent):
 
         if self.risky:
             if self.random.random() < 0.5:
-                self.wealth += self.wealth / 4 
+                self.wealth += self.wealth / 2
             else:
                 self.wealth -= self.wealth / 2
         else:
@@ -82,34 +87,28 @@ class MoneyModel(Model):
         self.schedule.step()
 
 
-np.set_printoptions(precision =2)
+np.set_printoptions(precision = 2)
 
-model = MoneyModel(100000)
+model = MoneyModel(10000)
 
 for i in range(20):
     model.step()
 
-gini = model.datacollector.get_model_vars_dataframe()
-gini.plot()
-plt.show()
+# gini = model.datacollector.get_model_vars_dataframe()
+# gini.plot()
+# plt.show()
 
-rr = [a.wealth for a in model.schedule.agents if a.risky == True and a.rich == True]
-sr = [a.wealth for a in model.schedule.agents if a.risky == False and a.rich == True]
-rp = [a.wealth for a in model.schedule.agents if a.risky == True and a.rich == False]
-sp = [a.wealth for a in model.schedule.agents if a.risky == False and a.rich == False]
+rr = [a.wealth for a in model.schedule.agents if a.init_risky == True and a.rich == True]
+sr = [a.wealth for a in model.schedule.agents if a.init_risky == False and a.rich == True]
+rp = [a.wealth for a in model.schedule.agents if a.init_risky == True and a.rich == False]
+sp = [a.wealth for a in model.schedule.agents if a.init_risky == False and a.rich == False]
 
-print
 
 print("            ", "       Max       ", "       Mean       ", "       Median       ")
 print("Risky Rich: ", max(rr), np.mean(rr), np.median(rr))
 print("Safe Rich: ", max(sr), np.mean(sr), np.median(sr))
 print("Risky Poor: ", max(rp), np.mean(rp), np.median(rp))
 print("Safe Poor: ", max(sp), np.mean(sp), np.median(sp))
-
-
-
-plt.hist(rr)
-plt.show()
 
 
 
