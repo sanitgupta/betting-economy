@@ -25,7 +25,7 @@ class MoneyAgent(Agent):
 
     def step(self):
 
-        if self.wealth == 0:
+        if self.wealth == 25:
             return
 
         if self.risky:
