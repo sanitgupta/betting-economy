@@ -17,28 +17,61 @@ def compute_gini(model):
 
 class MoneyAgent(Agent):
 
-    def __init__(self, unique_id, model):
+    def __init__(self, unique_id, model, risky, rich, base_wealth = 100):
+        
         super().__init__(unique_id, model)
-        self.wealth = 100
+        
+        self.init_risky = risky
+
+        self.risky = risky
+        self.rich = rich
+
+        if self.rich:
+            self.base_wealth = base_wealth * 10
+        else:
+            self.base_wealth = base_wealth
+        
+        self.wealth = self.base_wealth
+
 
     def step(self):
 
-        if self.wealth == 0:
-            return
-        
-        if self.random.random() < 0.5:
-            self.wealth += (self.wealth / 2) /2 
+        if self.wealth < self.base_wealth / 4:
+            self.risky = False
+
+        if self.risky:
+            if self.random.random() < 0.5:
+                self.wealth += 3 * self.wealth / 5
+            else:
+                self.wealth -= self.wealth / 2
         else:
-            self. wealth -= self.wealth / 2
+            if self.random.random() < 0.8:
+                self.wealth += self.wealth / 20
+            else:
+                self.wealth -= self.wealth / 10
+
 
 class MoneyModel(Model):
 
-    def __init__(self, N):
+    def __init__(self, N, risky_frac = 0.5, rich_frac = 0.5):
+
         self.num_agents = N
         self.schedule = RandomActivation(self)
+        self.risky_frac = risky_frac
 
         for i in range(self.num_agents):
-            a = MoneyAgent(i, self)
+
+            if self.random.random() < risky_frac:
+                risky = True
+            else:
+                risky = False
+
+            if self.random.random() < rich_frac:
+                rich = True
+            else:
+                rich = False
+            
+            a = MoneyAgent(i, self, risky, rich)
             self.schedule.add(a)
 
 
@@ -49,21 +82,40 @@ class MoneyModel(Model):
 
 
     def step(self):
-        '''Advance the model by one step.'''
+
         self.datacollector.collect(self)
         self.schedule.step()
 
-model = MoneyModel(1000)
+
+np.set_printoptions(precision = 2)
+
+model = MoneyModel(100000)
 
 for i in range(20):
     model.step()
 
-gini = model.datacollector.get_model_vars_dataframe()
-gini.plot()
-plt.show()
+# gini = model.datacollector.get_model_vars_dataframe()
+# gini.plot()
+# plt.show()
 
-agent_wealth = [a.wealth for a in model.schedule.agents]
-print(max(agent_wealth))
+rr = [a.wealth for a in model.schedule.agents if a.init_risky == True and a.rich == True]
+sr = [a.wealth for a in model.schedule.agents if a.init_risky == False and a.rich == True]
+rp = [a.wealth for a in model.schedule.agents if a.init_risky == True and a.rich == False]
+sp = [a.wealth for a in model.schedule.agents if a.init_risky == False and a.rich == False]
 
-plt.hist(agent_wealth)
-plt.show()
+
+print("            ", "       Max       ", "       Mean       ", "       Median       ")
+print("Risky Rich: ", max(rr), np.mean(rr), np.median(rr))
+print("Safe Rich: ", max(sr), np.mean(sr), np.median(sr))
+print("Risky Poor: ", max(rp), np.mean(rp), np.median(rp))
+print("Safe Poor: ", max(sp), np.mean(sp), np.median(sp))
+
+pl = 80
+
+bplrr = sum(i <= pl for i in rr)/len(rr)
+bplsr = sum(i <= pl for i in sr)/len(sr)
+bplrp = sum(i <= pl for i in rp)/len(rp)
+bplsp = sum(i <= pl for i in sp)/len(sr)
+
+
+print(bplrr, bplsr, bplrp, bplsp)
