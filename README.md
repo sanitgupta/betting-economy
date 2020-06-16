@@ -29,7 +29,7 @@ For the sake of this simulation, every person has equal probability of being bor
 A Risk-Averse person always makes the safe bet.
 A Risk-Tolerant person starts off always making the risky bet. If they end up losing enough money to be left with only one-fourth of what they started with, they switch to always making safe bets.
 
-Every person makes a series of 20 bets. We look at the wealth accumulated by the people at the end.
+Each person makes a series of 20 successive bets. We look at the wealth accumulated by the people at the end.
 
 ### Results and Discussion
 
