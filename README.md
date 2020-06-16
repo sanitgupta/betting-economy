@@ -43,7 +43,7 @@ Risk-Tolerant and Poor |  377789 | 252 | 23
 Risk-Averse and Poor | 265 | 148 | 143
 
 
-If one just looked at the expected values, one would have concluded that the risky bet was the obvious choice. The results are much more complex though.
+If one just looked at the expected values of the bets, one would have concluded that the risky bet was the obvious choice and hence being risk-tolerant would be the way to go. The results are much more complex though.
 
 While the the risk-tolerant people have a higher mean wealth than the risk-averse people for both the rich and the poor demographics, the mean wealth might not be the right metric to look at as it gets inflated because of the few people who strike gold, in this case because of sheer luck. The median, which is considered to be a fairer metric in general because of its robustness to outliers, paints a completely different picture. For both the rich and the poor group, the median wealth of the risk-tolerant people ends up being just one-fifth of the median welath of the risk-averse people.
 
